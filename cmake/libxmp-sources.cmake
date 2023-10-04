@@ -8,6 +8,7 @@ set(LIBXMP_SRC_LIST
     src/misc.c
     src/mkstemp.c
     src/md5.c
+    src/sha1.c
     src/lfo.c
     src/scan.c
     src/control.c

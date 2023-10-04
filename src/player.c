@@ -2199,11 +2199,14 @@ void xmp_get_module_info(xmp_context opaque, struct xmp_module_info *info)
 		return;
 
 	memcpy(info->md5, m->md5, 16);
+	memcpy(info->sha1, m->sha1, 20);
 	info->mod = mod;
 	info->comment = m->comment;
 	info->num_sequences = m->num_sequences;
 	info->seq_data = m->seq_data;
 	info->vol_base = m->volbase;
+	info->size = m->size;
+	info->filename = m->ext_filename;
 }
 
 void xmp_get_frame_info(xmp_context opaque, struct xmp_frame_info *info)

@@ -7,7 +7,7 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/include/libxmp-lite
     ${CMAKE_SOURCE_DIR}/src)
 
-add_executable(libxmp-test test.c ../src/md5.c)
+add_executable(libxmp-test test.c ../src/md5.c ../src/sha1.c)
 set_property(TARGET libxmp-test PROPERTY C_STANDARD 90)
 if(BUILD_SHARED) # Make sure unit test will find its DLLs while running
     set_property(TARGET libxmp-test PROPERTY RUNTIME_OUTPUT_DIRECTORY ${libxmp_BINARY_DIR})

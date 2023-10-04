@@ -34,6 +34,7 @@
 
 #ifndef LIBXMP_CORE_PLAYER
 #include "md5.h"
+#include "sha1.h"
 #include "extras.h"
 #endif
 
@@ -58,6 +59,21 @@ static void set_md5sum(HIO_HANDLE *f, unsigned char *digest)
 		MD5Update(&ctx, buf, bytes_read);
 	}
 	MD5Final(digest, &ctx);
+}
+
+static void set_sha1sum(HIO_HANDLE *f, unsigned char *digest)
+{
+	unsigned char buf[BUFLEN];
+	SHA1_CTX ctx;
+	int bytes_read;
+
+	hio_seek(f, 0, SEEK_SET);
+
+	SHA1Init(&ctx);
+	while ((bytes_read = hio_read(buf, 1, BUFLEN, f)) > 0) {
+		SHA1Update(&ctx, buf, bytes_read);
+	}
+	SHA1Final(digest, &ctx);
 }
 
 static char *get_dirname(const char *name)
@@ -309,8 +325,17 @@ static int load_module(xmp_context opaque, HIO_HANDLE *h)
 	}
 
 #ifndef LIBXMP_CORE_PLAYER
-	if (test_result == 0 && load_result == 0)
+	if (test_result == 0 && load_result == 0) {
 		set_md5sum(h, m->md5);
+		set_sha1sum(h, m->sha1);
+
+		if (h->filename) {
+			m->ext_filename = (char*)calloc(1, strlen(h->filename) + 1);
+			strcpy(m->ext_filename, h->filename);
+		}
+		else
+			m->ext_filename = NULL;
+	}
 #endif
 
 	libxmp_load_epilogue(ctx);
@@ -561,6 +586,10 @@ void xmp_release_module(xmp_context opaque)
 
 	free(m->comment);
 	m->comment = NULL;
+
+	free(m->ext_filename);
+	m->ext_filename = NULL;
+
 
 	D_("free dirname/basename");
 	free(m->dirname);

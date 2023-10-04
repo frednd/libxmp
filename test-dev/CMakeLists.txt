@@ -16,6 +16,7 @@ set(DEVTEST_SRC
     simple_module.c
     compare_mixer_data.c
     ../src/md5.c
+    ../src/sha1.c
     ../src/far_extras.c
     ../src/filetype.c
     ../src/hio.c

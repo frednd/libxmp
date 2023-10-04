@@ -40,6 +40,7 @@ OBJS= &
  src/misc.obj &
  src/mkstemp.obj &
  src/md5.obj &
+ src/sha1.obj &
  src/lfo.obj &
  src/scan.obj &
  src/control.obj &
@@ -227,6 +228,9 @@ all: $(BLD_TARGET)
 	$(CC) $(LIBFLAGS) -fo=$^@ $<
 
 test/md5.obj: src/md5.c
+	$(CC) $(CFLAGS) -fo=$^@ $<
+
+test/sha1.obj: src/sha1.c
 	$(CC) $(CFLAGS) -fo=$^@ $<
 
 test/test.obj: test/test.c

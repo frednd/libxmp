@@ -295,11 +295,14 @@ struct xmp_test_info {
 
 struct xmp_module_info {
 	unsigned char md5[16];		/* MD5 message digest */
+	unsigned char sha1[20];		/* SHA1 */
+	long size;
 	int vol_base;			/* Volume scale */
 	struct xmp_module *mod;		/* Pointer to module data */
 	char *comment;			/* Comment text, if any */
 	int num_sequences;		/* Number of valid sequences */
 	struct xmp_sequence *seq_data;	/* Pointer to sequence data */
+	char *filename;
 };
 
 struct xmp_channel_info {

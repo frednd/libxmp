@@ -86,6 +86,11 @@ static int decrunch_zip(HIO_HANDLE *in, void **out, long *outlen)
 		mz_zip_reader_end(&archive);
 		*out = pBuf;
 		*outlen = pSize;
+
+		if (in->filename) free(in->filename);
+		in->filename = (char*)calloc(1, strlen(filename) + 1);
+		strcpy(in->filename, filename);
+
 		return 0;
 	}
 

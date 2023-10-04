@@ -95,6 +95,13 @@ static int decrunch_lha(HIO_HANDLE *in, void **out, long *outlen)
 
     *out = outbuf;
     *outlen = (long) header->length;
+
+    if (in->filename) {
+        free(in->filename);
+    }
+    in->filename = (char*)calloc(1, strlen(header->filename) + 1);
+    strcpy(in->filename, header->filename);
+
     error = 0;
 
 fail:

@@ -46,6 +46,9 @@ all: $(BLD_TARGET)
 test/md5.obj: src/md5.c
 	$(CC) $(CFLAGS) -fo=$^@ $<
 
+test/sha1.obj: src/sha1.c
+	$(CC) $(CFLAGS) -fo=$^@ $<
+
 test/test.obj: test/test.c
 	$(CC) $(CFLAGS) -fo=$^@ $<
 

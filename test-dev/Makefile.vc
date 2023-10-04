@@ -12,6 +12,7 @@ TEST_SOURCES	= \
 
 XMP_SOURCES	= \
  ..\src\md5.c \
+ ..\src\sha1.c \
  ..\src\win32.c \
  ..\src\hio.c \
  ..\src\load_helpers.c \

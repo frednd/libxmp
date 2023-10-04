@@ -22,6 +22,7 @@ typedef struct {
 	} handle;
 	int error;
 	int noclose;
+	char *filename;
 } HIO_HANDLE;
 
 int8	hio_read8s	(HIO_HANDLE *);
