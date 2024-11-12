@@ -23,6 +23,8 @@ typedef struct {
 	int error;
 	int noclose;
 	char *filename;
+	int archive_file_offset;
+	int archive_file_done;
 } HIO_HANDLE;
 
 int8	hio_read8s	(HIO_HANDLE *);

@@ -322,7 +322,7 @@ static int load_module(xmp_context opaque, HIO_HANDLE *h)
 	}
 	for (i = 0; i < mod->smp; i++) {
 		libxmp_adjust_string(mod->xxs[i].name);
-	}
+	}	
 
 #ifndef LIBXMP_CORE_PLAYER
 	if (test_result == 0 && load_result == 0) {
@@ -361,6 +361,19 @@ static int load_module(xmp_context opaque, HIO_HANDLE *h)
 	return -XMP_ERROR_LOAD;
 }
 
+void xmp_set_archive_file_offset(xmp_context opaque, int archive_file_offset)
+{
+	struct context_data *ctx = (struct context_data *)opaque;
+	ctx->archive_file_offset = archive_file_offset;
+}
+
+int xmp_get_archive_file_offset(xmp_context opaque, int *done)
+{
+	struct context_data *ctx = (struct context_data *)opaque;
+	*done = ctx->archive_file_done;
+	return ctx->archive_file_offset;
+}
+
 int xmp_load_module(xmp_context opaque, const char *path)
 {
 	struct context_data *ctx = (struct context_data *)opaque;
@@ -389,6 +402,8 @@ int xmp_load_module(xmp_context opaque, const char *path)
 		return -XMP_ERROR_SYSTEM;
 	}
 
+	h->archive_file_offset = ctx->archive_file_offset;
+
 #ifndef LIBXMP_NO_DEPACKERS
 	D_(D_INFO "decrunch");
 	if (libxmp_decrunch(h, path, &temp_name) < 0) {
@@ -396,6 +411,9 @@ int xmp_load_module(xmp_context opaque, const char *path)
 		goto err;
 	}
 #endif
+
+	ctx->archive_file_offset = h->archive_file_offset;
+	ctx->archive_file_done = h->archive_file_done;
 
 	if (ctx->state > XMP_STATE_UNLOADED)
 		xmp_release_module(opaque);
@@ -432,6 +450,8 @@ int xmp_load_module(xmp_context opaque, const char *path)
 
 #ifndef LIBXMP_CORE_PLAYER
     err:
+	ctx->archive_file_offset = h->archive_file_offset;
+	ctx->archive_file_done = h->archive_file_done;
 	hio_close(h);
 #ifndef LIBXMP_NO_DEPACKERS
 	unlink_temp_file(temp_name);
@@ -589,7 +609,6 @@ void xmp_release_module(xmp_context opaque)
 
 	free(m->ext_filename);
 	m->ext_filename = NULL;
-
 
 	D_("free dirname/basename");
 	free(m->dirname);

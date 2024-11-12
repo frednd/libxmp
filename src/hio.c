@@ -381,6 +381,8 @@ HIO_HANDLE *hio_open(const char *path, const char *mode)
 		goto err3;
 
 	h->filename = NULL;
+	h->archive_file_offset = 0;
+	h->archive_file_done = 0;
 
 	return h;
 
@@ -411,6 +413,8 @@ HIO_HANDLE *hio_open_mem(const void *ptr, long size, int free_after_use)
 	}
 
 	h->filename = NULL;
+	h->archive_file_offset = 0;
+	h->archive_file_done = 0;
 
 	return h;
 }
@@ -433,6 +437,8 @@ HIO_HANDLE *hio_open_file(FILE *f)
 	}
 
 	h->filename = NULL;
+	h->archive_file_offset = 0;
+	h->archive_file_done = 0;
 
 	return h;
 }
@@ -472,6 +478,8 @@ HIO_HANDLE *hio_open_callbacks(void *priv, struct xmp_callbacks callbacks)
 	}
 
 	h->filename = NULL;
+	h->archive_file_offset = 0;
+	h->archive_file_done = 0;
 
 	return h;
 }
@@ -495,6 +503,8 @@ static int hio_close_internal(HIO_HANDLE *h)
 	if (h->filename) {
 		free(h->filename);
 		h->filename = NULL;
+		h->archive_file_offset = 0;
+		h->archive_file_done = 0;
 	}
 
 	return ret;
@@ -514,6 +524,8 @@ int hio_reopen_mem(const void *ptr, long size, int free_after_use, HIO_HANDLE *h
 
 	char *filename_backup = h->filename;
 	h->filename = NULL;
+	int offset = h->archive_file_offset;
+	int done = h->archive_file_done;
 
 	ret = hio_close_internal(h);
 	if (ret < 0) {
@@ -526,6 +538,8 @@ int hio_reopen_mem(const void *ptr, long size, int free_after_use, HIO_HANDLE *h
 	h->handle.mem = m;
 	h->size = size;
 	h->filename = filename_backup;
+	h->archive_file_offset = offset;
+	h->archive_file_done = done;
 	return 0;
 }
 

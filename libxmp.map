@@ -72,4 +72,6 @@ XMP_4.5 {
     xmp_test_module_from_memory;
     xmp_test_module_from_callbacks;
     xmp_syserrno;
+    xmp_set_archive_file_offset;
+    xmp_get_archive_file_offset;
 } XMP_4.4;

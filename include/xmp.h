@@ -358,6 +358,8 @@ LIBXMP_EXPORT int         xmp_syserrno        (void);
 
 LIBXMP_EXPORT xmp_context xmp_create_context  (void);
 LIBXMP_EXPORT void        xmp_free_context    (xmp_context);
+LIBXMP_EXPORT void        xmp_set_archive_file_offset    (xmp_context, int);
+LIBXMP_EXPORT int        xmp_get_archive_file_offset    (xmp_context, int *);
 
 LIBXMP_EXPORT int         xmp_load_module     (xmp_context, const char *);
 LIBXMP_EXPORT int         xmp_load_module_from_memory (xmp_context, const void *, long);

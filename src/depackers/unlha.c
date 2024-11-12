@@ -67,10 +67,16 @@ static int decrunch_lha(HIO_HANDLE *in, void **out, long *outlen)
         return -1;
     }
 
+	int idx = in->archive_file_offset;
+
+    int cnt = 0;
     for (;;) {
         header = lha_reader_next_file(reader);
         if (!header) {
             break;
+        }
+        if (idx>cnt++) {
+            continue;
         }
         if (!strcmp(header->compress_method, LHA_COMPRESS_TYPE_DIR)) {
             continue;   /* directory or symlink */
@@ -78,7 +84,7 @@ static int decrunch_lha(HIO_HANDLE *in, void **out, long *outlen)
         if (!libxmp_exclude_match(header->filename)) {
             break;
         }
-    }
+    }    
 
     if (!header || (long)header->length <= 0) {
         goto fail;
@@ -105,6 +111,14 @@ static int decrunch_lha(HIO_HANDLE *in, void **out, long *outlen)
     error = 0;
 
 fail:
+    if (error == 0) {
+        in->archive_file_offset = cnt;
+        in->archive_file_done = 0;
+    }
+    else {
+        in->archive_file_done = 1;
+    }
+
     lha_reader_free(reader);
     lha_input_stream_free(stream);
     return error;

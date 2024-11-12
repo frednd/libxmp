@@ -58,8 +58,9 @@ static int decrunch_zip(HIO_HANDLE *in, void **out, long *outlen)
 		D_(D_CRIT "Failed to open archive: %s", mz_zip_get_error_string(archive.m_last_error));
 		return -1;
 	}
-
-	for (i = 0; i < archive.m_total_files; i++) {
+	
+	i = in->archive_file_offset;
+	for (; i < archive.m_total_files; i++) {
 		if (mz_zip_reader_get_filename(&archive, i, filename, MZ_ZIP_MAX_ARCHIVE_FILENAME_SIZE) == 0) {
 			D_(D_WARN "Could not get file name: %s", mz_zip_get_error_string(archive.m_last_error));
 			continue;
@@ -91,11 +92,20 @@ static int decrunch_zip(HIO_HANDLE *in, void **out, long *outlen)
 		in->filename = (char*)calloc(1, strlen(filename) + 1);
 		strcpy(in->filename, filename);
 
+		if (i < archive.m_total_files - 1) {
+			in->archive_file_offset = i + 1;
+			in->archive_file_done = 0;
+		}
+		else {
+			in->archive_file_done = 1;
+		}
+
 		return 0;
 	}
 
 	mz_zip_reader_end(&archive);
 #endif
+	in->archive_file_done = 1;
 	return -1;
 }
 

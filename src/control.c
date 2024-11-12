@@ -39,6 +39,8 @@ xmp_context xmp_create_context(void)
 	ctx->state = XMP_STATE_UNLOADED;
 	ctx->m.defpan = 100;
 	ctx->s.numvoc = SMIX_NUMVOC;
+	ctx->archive_file_offset = 0;
+	ctx->archive_file_done = 0;
 
 	return (xmp_context)ctx;
 }
