@@ -1,4 +1,3 @@
-
 SRC_OBJS	= virtual.o format.o period.o player.o read_event.o dataio.o \
 		  misc.o mkstemp.o md5.o sha1.o lfo.o scan.o control.o far_extras.o \
 		  med_extras.o filter.o effects.o mixer.o mix_all.o \

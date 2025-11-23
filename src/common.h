@@ -385,6 +385,7 @@ struct module_data {
 	char *ext_filename;	
 	uint8 md5[16];			/* MD5 message digest */
 	uint8 sha1[20];			/* SHA1 */
+	uint8 sha256[32];		/* SHA256 */
 	int size;			/* File size */
 	double rrate;			/* Replay rate */
 	double time_factor;		/* Time conversion constant */

@@ -35,6 +35,7 @@
 #ifndef LIBXMP_CORE_PLAYER
 #include "md5.h"
 #include "sha1.h"
+#include <openssl/evp.h>
 #include "extras.h"
 #endif
 
@@ -74,6 +75,46 @@ static void set_sha1sum(HIO_HANDLE *f, unsigned char *digest)
 		SHA1Update(&ctx, buf, bytes_read);
 	}
 	SHA1Final(digest, &ctx);
+}
+
+static char set_sha256sum(HIO_HANDLE *f, unsigned char *digest)
+{
+	unsigned char buf[BUFLEN];
+	int bytes_read;
+	EVP_MD_CTX *mdctx = NULL;
+	unsigned char md_value[EVP_MAX_MD_SIZE];
+	unsigned int md_len = 0;
+
+	hio_seek(f, 0, SEEK_SET);
+
+	mdctx = EVP_MD_CTX_new();
+	if (mdctx == NULL)
+		return -1;
+
+	if (EVP_DigestInit_ex(mdctx, EVP_sha256(), NULL) != 1) {
+		EVP_MD_CTX_free(mdctx);
+		return -1;
+	}
+
+	while ((bytes_read = hio_read(buf, 1, BUFLEN, f)) > 0) {
+		if (EVP_DigestUpdate(mdctx, buf, bytes_read) != 1) {
+			EVP_MD_CTX_free(mdctx);
+			return -1;
+		}
+	}
+
+	if (EVP_DigestFinal_ex(mdctx, md_value, &md_len) != 1) {
+		EVP_MD_CTX_free(mdctx);
+		return -1;
+	}
+
+	EVP_MD_CTX_free(mdctx);
+
+	if (md_len != 32)
+		return -1;
+
+	memcpy(digest, md_value, 32);
+	return 0;
 }
 
 static char *get_dirname(const char *name)
@@ -328,6 +369,7 @@ static int load_module(xmp_context opaque, HIO_HANDLE *h)
 	if (test_result == 0 && load_result == 0) {
 		set_md5sum(h, m->md5);
 		set_sha1sum(h, m->sha1);
+		set_sha256sum(h, m->sha256);
 
 		if (h->filename) {
 			m->ext_filename = (char*)calloc(1, strlen(h->filename) + 1);

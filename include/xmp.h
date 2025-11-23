@@ -296,6 +296,7 @@ struct xmp_test_info {
 struct xmp_module_info {
 	unsigned char md5[16];		/* MD5 message digest */
 	unsigned char sha1[20];		/* SHA1 */
+	unsigned char sha256[32];	/* SHA256 */
 	long size;
 	int vol_base;			/* Volume scale */
 	struct xmp_module *mod;		/* Pointer to module data */
