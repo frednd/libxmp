@@ -2293,3 +2293,21 @@ void xmp_get_frame_info(xmp_context opaque, struct xmp_frame_info *info)
 		}
 	}
 }
+
+int xmp_get_module_data(xmp_context opaque, unsigned char *out_buffer, int size)
+{
+	struct context_data *ctx = (struct context_data *)opaque;
+	struct module_data *m = &ctx->m;
+
+	if (ctx->state < XMP_STATE_LOADED)
+		return 0;
+
+	if (out_buffer == NULL) {
+		return m->size;
+	}
+
+	size = MIN(size, m->size);
+	memcpy(out_buffer, m->file_data, size);
+
+	return size;
+}

@@ -47,6 +47,29 @@ int  libxmp_prepare_scan(struct context_data *);
 #ifndef LIBXMP_CORE_PLAYER
 #define BUFLEN 16384
 
+static size_t get_file_data(HIO_HANDLE *f, unsigned char **file_data)
+{
+	unsigned char *data;
+
+	hio_seek(f, 0, SEEK_SET);
+
+	size_t size = hio_size(f);
+	data = (unsigned char *)malloc(size);
+	if (data == NULL) {
+		*file_data = NULL;
+		return 0;
+	}
+
+	if (hio_read(data, 1, size, f) != size) {
+		free(data);
+		*file_data = NULL;
+		return 0;
+	}
+
+	*file_data = data;
+	return size;
+}
+
 static void set_md5sum(HIO_HANDLE *f, unsigned char *digest)
 {
 	unsigned char buf[BUFLEN];
@@ -370,6 +393,8 @@ static int load_module(xmp_context opaque, HIO_HANDLE *h)
 		set_md5sum(h, m->md5);
 		set_sha1sum(h, m->sha1);
 		set_sha256sum(h, m->sha256);
+		
+		get_file_data(h, m->file_data);
 
 		if (h->filename) {
 			m->ext_filename = (char*)calloc(1, strlen(h->filename) + 1);
@@ -475,6 +500,7 @@ int xmp_load_module(xmp_context opaque, const char *path)
 
 	m->filename = path;	/* For ALM, SSMT, etc */
 	m->size = hio_size(h);
+	m->file_data = NULL;
 #else
 	ctx->m.filename = NULL;
 	ctx->m.dirname = NULL;
@@ -523,6 +549,7 @@ int xmp_load_module_from_memory(xmp_context opaque, const void *mem, long size)
 	m->basename = NULL;
 	m->dirname = NULL;
 	m->size = size;
+	m->file_data = NULL;
 
 	ret = load_module(opaque, h);
 
@@ -548,6 +575,7 @@ int xmp_load_module_from_file(xmp_context opaque, void *file, long size)
 	m->basename = NULL;
 	m->dirname = NULL;
 	m->size = hio_size(h);
+	m->file_data = NULL;
 
 	ret = load_module(opaque, h);
 
@@ -574,6 +602,7 @@ int xmp_load_module_from_callbacks(xmp_context opaque, void *priv,
 	m->basename = NULL;
 	m->dirname = NULL;
 	m->size = hio_size(h);
+	m->file_data = NULL;
 
 	ret = load_module(opaque, h);
 
@@ -605,6 +634,11 @@ void xmp_release_module(xmp_context opaque)
 #ifndef LIBXMP_CORE_PLAYER
 	libxmp_release_module_extras(ctx);
 #endif
+
+	if (m->file_data) {
+		free(m->file_data);
+		m->file_data = NULL;
+	}
 
 	if (mod->xxt != NULL) {
 		for (i = 0; i < mod->trk; i++) {
