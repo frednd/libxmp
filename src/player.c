@@ -2198,9 +2198,9 @@ void xmp_get_module_info(xmp_context opaque, struct xmp_module_info *info)
 	if (ctx->state < XMP_STATE_LOADED)
 		return;
 
-	memcpy(info->md5, m->md5, 16);
-	memcpy(info->sha1, m->sha1, 20);
-	memcpy(info->sha256, m->sha256, 32);
+	// memcpy(info->md5, m->md5, 16);
+	// memcpy(info->sha1, m->sha1, 20);
+	// memcpy(info->sha256, m->sha256, 32);
 	info->mod = mod;
 	info->comment = m->comment;
 	info->num_sequences = m->num_sequences;

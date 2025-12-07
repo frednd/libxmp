@@ -391,10 +391,10 @@ static int load_module(xmp_context opaque, HIO_HANDLE *h)
 #ifndef LIBXMP_CORE_PLAYER
 	if (test_result == 0 && load_result == 0) {
 		set_md5sum(h, m->md5);
-		set_sha1sum(h, m->sha1);
-		set_sha256sum(h, m->sha256);
+		// set_sha1sum(h, m->sha1);
+		// set_sha256sum(h, m->sha256);
 		
-		get_file_data(h, m->file_data);
+		get_file_data(h, &m->file_data);
 
 		if (h->filename) {
 			m->ext_filename = (char*)calloc(1, strlen(h->filename) + 1);
